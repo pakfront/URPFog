@@ -1,15 +1,32 @@
-﻿Shader "Blit/Fog2"
+﻿Shader "VolumetricFog/SimpleDirectional"
 {
 	Properties 
 	{
 	    [HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
-		[Toggle(DEBUG_OUTPUT)]_Raw ("Debug Output", Float) = 0
+		[Toggle(DEBUG_OUTPUT)]_DEBUG ("Debug Output", Float) = 0
+		[IntRange(RAW_OUTPUT)]_Raw ("Raw Output", Float) = 0
+
+		_FogColor ("Fog Color", Color) = (.3,.3,.3,1)
+		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
+		_HeightFogFloor ("Height Fog Floor", Range(0, 10)) = 0
+		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
+        [IntRange] _SampleCount ("Sample Count", Range (1, 48)) = 8
+		_Scattering ("Scattering", Range(0, 10)) = 0.227
+		_Extinction ("Extinction", Range(0, 10)) = 0.1
+		_Range ("Range", Range(1, 50)) = 0.5
+		_SkyBoxExtinction ("Sky Box Extinction", Range(0, 1)) = 0.9 
+        _MeiGFloat ("MeiG", Range(0,1)) = 0.319
 	}
 	SubShader 
 	{
 		Tags { "RenderType"="Opaque" }
 		LOD 200
 		
+		// Cull Front
+        // ZWrite On
+        // ColorMask RGB
+        Blend SrcAlpha OneMinusSrcAlpha
+
 		Pass
 		{
             HLSLPROGRAM
@@ -20,11 +37,17 @@
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 
             #pragma shader_feature DEBUG_OUTPUT
+            #pragma shader_feature HEIGHT_FOG
             
+            #include "Volumetrics.hlsl"
+
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
             
-
+#ifndef RAW_OUTPUT
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+#endif
             
         struct Attributes
         {
@@ -71,17 +94,32 @@
             float3 vpos = ComputeViewSpacePosition(input.uv.zw, deviceDepth, unity_CameraInvProjection);
             float3 wpos = mul(unity_CameraToWorld, float4(vpos, 1)).xyz;
 
-            //Fetch shadow coordinates for cascade.
-            float4 coords = TransformWorldToShadowCoord(wpos);
+            float3 rayStart = _WorldSpaceCameraPos;
+            float3 rayEnd = wpos;
 
-            // Screenspace shadowmap is only used for directional lights which use orthogonal projection.
-            ShadowSamplingData shadowSamplingData = GetMainLightShadowSamplingData();
-            half shadowStrength = GetMainLightShadowStrength();
-#ifdef DEBUG_OUTPUT
+            float3 rayDir = (rayEnd - rayStart);
+            float rayLength = length(rayDir);
+            rayDir /= rayLength;
+            float4 fog = RayMarch(rayStart,rayDir,rayLength);
+            //Fetch shadow coordinates for cascade.
+            // float4 coords = TransformWorldToShadowCoord(wpos);
+            // // Screenspace shadowmap is only used for directional lights which use orthogonal projection.
+            // ShadowSamplingData shadowSamplingData = GetMainLightShadowSamplingData();
+            // half shadowStrength = GetMainLightShadowStrength();
+            // float shadow = SampleShadowmap(coords, TEXTURE2D_ARGS(_MainLightShadowmapTexture, sampler_MainLightShadowmapTexture), shadowSamplingData, shadowStrength, false);
+
+            // float density = 0;//GetDensity(wpos);
+
+#ifndef DEBUG_OUTPUT
+
+#else       
+            // return half4(density.xxx,1);
             return half4(wpos.xyz, 1);
             return half4(deviceDepth.xxx, 1);
+            return half4(shadow.xxx,1);
 #endif
-            return SampleShadowmap(coords, TEXTURE2D_ARGS(_MainLightShadowmapTexture, sampler_MainLightShadowmapTexture), shadowSamplingData, shadowStrength, false);
+            return half4(fog+SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv));
+
         }
             
 			#pragma vertex Vertex

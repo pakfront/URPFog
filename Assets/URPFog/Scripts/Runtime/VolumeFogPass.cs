@@ -1,4 +1,4 @@
-using UnityEngine.Rendering;
+﻿using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace UnityEngine.Experiemntal.Rendering.Universal
@@ -10,7 +10,7 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
     /// so you can use it later in rendering. For example, you can copy
     /// the opaque texture to use it for distortion effects.
     /// </summary>
-    internal class BlitPass : ScriptableRenderPass
+    internal class VolumeFogPass : ScriptableRenderPass
     {
         public enum RenderTarget
         {
@@ -18,8 +18,8 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             RenderTexture,
         }
 
-        public Material blitMaterial = null;
-        public int blitShaderPassIndex = 0;
+        public Material volumeFogMaterial = null;
+        public int volumeFogShaderPassIndex = 0;
         public FilterMode filterMode { get; set; }
 
         private RenderTargetIdentifier source { get; set; }
@@ -31,11 +31,11 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
         /// <summary>
         /// Create the CopyColorPass
         /// </summary>
-        public BlitPass(RenderPassEvent renderPassEvent, Material blitMaterial, int blitShaderPassIndex, string tag)
+        public VolumeFogPass(RenderPassEvent renderPassEvent, Material volumeFogMaterial, int volumeFogShaderPassIndex, string tag)
         {
             this.renderPassEvent = renderPassEvent;
-            this.blitMaterial = blitMaterial;
-            this.blitShaderPassIndex = blitShaderPassIndex;
+            this.volumeFogMaterial = volumeFogMaterial;
+            this.volumeFogShaderPassIndex = volumeFogShaderPassIndex;
             m_ProfilerTag = tag;
             m_TemporaryColorTexture.Init("_TemporaryColorTexture");
         }
@@ -59,16 +59,16 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             RenderTextureDescriptor opaqueDesc = renderingData.cameraData.cameraTargetDescriptor;
             opaqueDesc.depthBufferBits = 0;
 
-            // Can't read and write to same color target, create a temp render target to blit. 
+            // Can't read and write to same color target, create a temp render target to volumeFog. 
             if (destination == RenderTargetHandle.CameraTarget)
             {
                 cmd.GetTemporaryRT(m_TemporaryColorTexture.id, opaqueDesc, filterMode);
-                Blit(cmd, source, m_TemporaryColorTexture.Identifier(), blitMaterial, blitShaderPassIndex);
+                Blit(cmd, source, m_TemporaryColorTexture.Identifier(), volumeFogMaterial, volumeFogShaderPassIndex);
                 Blit(cmd, m_TemporaryColorTexture.Identifier(), source);
             }
             else
             {
-                Blit(cmd, source, destination.Identifier(), blitMaterial, blitShaderPassIndex);
+                Blit(cmd, source, destination.Identifier(), volumeFogMaterial, volumeFogShaderPassIndex);
             }
             
             context.ExecuteCommandBuffer(cmd);
