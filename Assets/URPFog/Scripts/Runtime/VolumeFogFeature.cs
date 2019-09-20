@@ -2,7 +2,7 @@
 
 namespace UnityEngine.Experiemntal.Rendering.Universal
 {
-    public class VolumeFog : ScriptableRendererFeature
+    public class VolumeFogFeature : ScriptableRendererFeature
     {
         [System.Serializable]
         public class VolumeFogSettings
@@ -13,6 +13,8 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             public int volumeFogMaterialPassIndex = -1;
             public Target destination = Target.Color;
             public string textureId = "_VolumeFogPassTexture";
+
+            public ComputeShader volumetricNoiseShader;
         }
         
         public enum Target

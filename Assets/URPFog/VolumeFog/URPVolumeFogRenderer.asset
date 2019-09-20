@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b78ddc2f5553042c98baa7a44524aac8, type: 3}
-  m_Name: NewVolumeFog
+  m_Name: VolumeFog
   m_EditorClassIdentifier: 
   settings:
     Event: 300
@@ -18,6 +18,7 @@ MonoBehaviour:
     volumeFogMaterialPassIndex: 0
     destination: 0
     textureId: _VolumeFogPassTexture
+    noiseShader: {fileID: 7200000, guid: ac60c9d4fe7e44eeb84bc6d9f3488850, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28,10 +29,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
-  m_Name: URPFog1Renderer
+  m_Name: URPVolumeFogRenderer
   m_EditorClassIdentifier: 
   m_RendererFeatures:
-  - {fileID: 0}
   - {fileID: -8076725046230882736}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   shaders:

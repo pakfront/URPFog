@@ -59,7 +59,7 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             RenderTextureDescriptor opaqueDesc = renderingData.cameraData.cameraTargetDescriptor;
             opaqueDesc.depthBufferBits = 0;
 
-            // Can't read and write to same color target, create a temp render target to volumeFog. 
+            // Can't read and write to same color target, create a temp render target to blit. 
             if (destination == RenderTargetHandle.CameraTarget)
             {
                 cmd.GetTemporaryRT(m_TemporaryColorTexture.id, opaqueDesc, filterMode);

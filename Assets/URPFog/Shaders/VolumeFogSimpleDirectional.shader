@@ -4,7 +4,7 @@
 	{
 	    [HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
 		[Toggle(DEBUG_OUTPUT)]_DEBUG ("Debug Output", Float) = 0
-		[IntRange(RAW_OUTPUT)]_Raw ("Raw Output", Float) = 0
+		[Toggle(FOG_ONLY_OUTPUT)]_FOG_ONLY ("Fog Only Output", Float) = 0
 
 		_FogColor ("Fog Color", Color) = (.3,.3,.3,1)
 		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
@@ -37,6 +37,7 @@
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 
             #pragma shader_feature DEBUG_OUTPUT
+            #pragma shader_feature FOG_ONLY_OUTPUT
             #pragma shader_feature HEIGHT_FOG
             
             #include "Volumetrics.hlsl"
@@ -44,7 +45,7 @@
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
             
-#ifndef RAW_OUTPUT
+#ifndef FOG_ONLY_OUTPUT
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
 #endif
@@ -110,15 +111,18 @@
 
             // float density = 0;//GetDensity(wpos);
 
-#ifndef DEBUG_OUTPUT
-
-#else       
+#ifdef DEBUG_OUTPUT
             // return half4(density.xxx,1);
             return half4(wpos.xyz, 1);
             return half4(deviceDepth.xxx, 1);
-            return half4(shadow.xxx,1);
-#endif
+            // return half4(shadow.xxx,1);
+#else
+#ifdef FOG_ONLY_OUTPUT
+            return half4(fog);
+#else
             return half4(fog+SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv));
+#endif
+#endif
 
         }
             
