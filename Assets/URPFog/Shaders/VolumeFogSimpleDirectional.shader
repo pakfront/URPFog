@@ -5,12 +5,12 @@
 	    [HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
 		[Toggle(DEBUG_OUTPUT)]_DEBUG ("Debug Output", Float) = 0
 		[Toggle(FOG_ONLY_OUTPUT)]_FOG_ONLY ("Fog Only Output", Float) = 0
-
-		_FogColor ("Fog Color", Color) = (.3,.3,.3,1)
+        _VolumetricNoiseTexture("Volumetric Noise Texture",3D) = "" {} 
 		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
 		_HeightFogFloor ("Height Fog Floor", Range(0, 10)) = 0
 		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
         [IntRange] _SampleCount ("Sample Count", Range (1, 48)) = 8
+		_FogColor ("Fog Color", Color) = (.3,.3,.3,1)
 		_Scattering ("Scattering", Range(0, 10)) = 0.227
 		_Extinction ("Extinction", Range(0, 10)) = 0.1
 		_Range ("Range", Range(1, 50)) = 0.5
@@ -45,6 +45,11 @@
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
             
+            TEXTURE3D(_VolumetricNoiseTexture);
+            SAMPLER(sampler_VolumetricNoiseTexture);
+            // Texture3D _VolumetricNoiseTexture;
+            // SamplerState sampler_VolumetricNoiseTexture;
+
 #ifndef FOG_ONLY_OUTPUT
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
@@ -113,8 +118,11 @@
 
 #ifdef DEBUG_OUTPUT
             // return half4(density.xxx,1);
-            return half4(wpos.xyz, 1);
-            return half4(deviceDepth.xxx, 1);
+            // return half4(wpos.xyz, 1);
+            // return half4(deviceDepth.xxx, 1);
+            return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f).xxx, 1 );
+            // return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f) );
+
             // return half4(shadow.xxx,1);
 #else
 #ifdef FOG_ONLY_OUTPUT

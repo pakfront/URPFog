@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreateNoiseTextures : MonoBehaviour
+public class CreateNoiseTextures
 {
     public ComputeShader computeShader;
     public Color color =  Color.red;
@@ -10,8 +10,9 @@ public class CreateNoiseTextures : MonoBehaviour
     public int size = 512;
 
     int kernel;
-    // Start is called before the first frame update
-    void Start()
+    public CreateNoiseTextures(ComputeShader computeShader) {}
+
+    public void Create()
     {
         kernel = computeShader.FindKernel("CSMain");
         result = new RenderTexture(size,size,24);

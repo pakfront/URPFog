@@ -7,7 +7,6 @@ float4 _FogColor = 1;
 float _HeightFogFloor = 0;
 float _HeightFogDropoff = 0.5f;
 int _SampleCount = 8;
-// x: scattering coef, y: extinction coef, z: range w: skybox extinction coef
 float _Scattering = 0.5f;
 float _Extinction = 0.5f;
 float _Range = 200.0f;

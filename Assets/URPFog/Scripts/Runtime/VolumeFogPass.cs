@@ -28,6 +28,9 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
         RenderTargetHandle m_TemporaryColorTexture;
         string m_ProfilerTag;
 
+        public RenderTexture volumetricNoiseTexture;
+
+
         /// <summary>
         /// Create the CopyColorPass
         /// </summary>
@@ -81,5 +84,7 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             if (destination == RenderTargetHandle.CameraTarget)
                 cmd.ReleaseTemporaryRT(m_TemporaryColorTexture.id);
         }
+
+
     }
 }
