@@ -28,9 +28,6 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
         RenderTargetHandle m_TemporaryColorTexture;
         string m_ProfilerTag;
 
-        public RenderTexture volumetricNoiseTexture;
-
-
         /// <summary>
         /// Create the CopyColorPass
         /// </summary>

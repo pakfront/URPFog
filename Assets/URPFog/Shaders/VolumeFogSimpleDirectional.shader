@@ -16,6 +16,9 @@
 		_Range ("Range", Range(1, 50)) = 0.5
 		_SkyBoxExtinction ("Sky Box Extinction", Range(0, 1)) = 0.9 
         _MeiGFloat ("MeiG", Range(0,1)) = 0.319
+		_NoiseScale ("Noise Scale", Range(0, 10)) = 1
+		_NoiseSpeed ("Noise Speed", Vector) = (1,0,1)
+
 	}
 	SubShader 
 	{
@@ -41,6 +44,8 @@
             #pragma shader_feature HEIGHT_FOG
             
             #include "Volumetrics.hlsl"
+            #include "SimplexNoise3D.hlsl"
+
 
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
@@ -120,7 +125,15 @@
             // return half4(density.xxx,1);
             // return half4(wpos.xyz, 1);
             // return half4(deviceDepth.xxx, 1);
-            return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f).xxx, 1 );
+
+            // return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f).xxx, 1 );
+            float3 noiseUV = frac(wpos * _NoiseScale + _Time.y * _NoiseSpeed);
+            //return half4( noiseUV, 1);
+            float noise = _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, noiseUV);
+            // float noise = snoise(noiseUV);
+            return half4(noise.xx, .25, 1);
+            // float noise = tex3D(_NoiseTexture, frac(wpos * _NoiseData.x + float3(_Time.y * _NoiseVelocity.x, 0, _Time.y * _NoiseVelocity.y)));
+           
             // return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f) );
 
             // return half4(shadow.xxx,1);

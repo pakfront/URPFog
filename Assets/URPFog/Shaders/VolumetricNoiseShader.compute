@@ -13,6 +13,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     // TODO: insert actual code here!
 
     // Result[id.xyz] = color * float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 1.0);
-    // Result[id.xyz] = float(id.x & id.y);
-    Result[id.xyz] = 0.2f;
+    Result[id.xyz] = float(id.x & id.y);
+    // Result[id.xyz] = 1.0;
 }

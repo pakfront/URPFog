@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     Event: 300
-    volumeFogMaterial: {fileID: 2100000, guid: f012cc041ddc048eca800cbc9cc5fd6d, type: 2}
+    volumeFogMaterial: {fileID: 2100000, guid: c602e5bff6c594a89a1feefcbe5aa33b, type: 2}
     volumeFogMaterialPassIndex: 0
     destination: 0
     textureId: _VolumeFogPassTexture
-    noiseShader: {fileID: 7200000, guid: ac60c9d4fe7e44eeb84bc6d9f3488850, type: 3}
+    volumetricNoiseShader: {fileID: 7200000, guid: ac60c9d4fe7e44eeb84bc6d9f3488850,
+      type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
