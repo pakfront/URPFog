@@ -2,7 +2,9 @@
 
 Simple Post Processed Volumetric Fog in Unity's Universal Render Pipeline (URP)
 
-##Based on work in 
+![](example.gif)
+
+## Based on work in 
 
 Simple Mad's [VolumetricLights](https://github.com/SlightlyMad/VolumetricLights)
 
