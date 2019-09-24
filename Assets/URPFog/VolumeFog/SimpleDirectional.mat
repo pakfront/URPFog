@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: SimpleDirectional
   m_Shader: {fileID: 4800000, guid: 4503bcccca5e4499386c31c3f8c5559e, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: HEIGHT_FOG NOISE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -48,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _VolumetricNoiseTexture:
-        m_Texture: {fileID: 11700000, guid: 61fde40c830f74c18908a02da1e22e19, type: 2}
+        m_Texture: {fileID: 11700000, guid: ffacf153ba46a470cbb99fbe25d25863, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -60,23 +60,26 @@ Material:
     - _DEBUG: 0
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _Extinction: 0.1
+    - _Extinction: 0.55
     - _FOG_ONLY: 0
+    - _FodDensity: 6.4
+    - _FogDensity: 0.83
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HEIGHT_FOG: 0
+    - _HEIGHT_FOG: 1
     - _HeightFogDropoff: 1.66
     - _HeightFogFloor: 0
     - _MeiGFloat: 0.319
     - _Metallic: 0
-    - _NoiseScale: 1.29
+    - _NOISE: 1
+    - _NoiseScale: 6.19
     - _OcclusionStrength: 1
     - _QueueOffset: 0
     - _Range: 0.5
     - _ReceiveShadows: 1
     - _SampleCount: 8
-    - _Scattering: 0.227
+    - _Scattering: 10
     - _SkyBoxExtinction: 0.9
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
@@ -89,6 +92,6 @@ Material:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FogColor: {r: 0.29999998, g: 0.29999998, b: 0.29999998, a: 1}
-    - _NoiseSpeed: {r: 1, g: 0, b: 1, a: 1}
+    - _FogColor: {r: 1, g: 1, b: 1, a: 1}
+    - _NoiseSpeed: {r: 0.1, g: 0, b: 0.1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}

@@ -5,21 +5,22 @@
 	    [HideInInspector]_MainTex ("Base (RGB)", 2D) = "white" {}
 		[Toggle(DEBUG_OUTPUT)]_DEBUG ("Debug Output", Float) = 0
 		[Toggle(FOG_ONLY_OUTPUT)]_FOG_ONLY ("Fog Only Output", Float) = 0
-        _VolumetricNoiseTexture("Volumetric Noise Texture",3D) = "" {} 
-		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
-		_HeightFogFloor ("Height Fog Floor", Range(0, 10)) = 0
-		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
         [IntRange] _SampleCount ("Sample Count", Range (1, 48)) = 8
+		_FogDensity ("Fog Density", Range(0, 4)) = 1 
 		_FogColor ("Fog Color", Color) = (.3,.3,.3,1)
 		_Scattering ("Scattering", Range(0, 10)) = 0.227
 		_Extinction ("Extinction", Range(0, 10)) = 0.1
 		_Range ("Range", Range(1, 50)) = 0.5
 		_SkyBoxExtinction ("Sky Box Extinction", Range(0, 1)) = 0.9 
         _MeiGFloat ("MeiG", Range(0,1)) = 0.319
+		[Toggle(NOISE)]_NOISE ("Noise", Float) = 0
+        _VolumetricNoiseTexture("Volumetric Noise Texture",3D) = "" {} 
 		_NoiseScale ("Noise Scale", Range(0, 10)) = 1
 		_NoiseSpeed ("Noise Speed", Vector) = (1,0,1)
-
-	}
+		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
+		_HeightFogFloor ("Height Fog Floor", Range(0, 10)) = 0
+		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
+    }
 	SubShader 
 	{
 		Tags { "RenderType"="Opaque" }
@@ -42,6 +43,7 @@
             #pragma shader_feature DEBUG_OUTPUT
             #pragma shader_feature FOG_ONLY_OUTPUT
             #pragma shader_feature HEIGHT_FOG
+            #pragma shader_feature NOISE
             
             #include "Volumetrics.hlsl"
             #include "SimplexNoise3D.hlsl"
@@ -50,10 +52,9 @@
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
             
-            TEXTURE3D(_VolumetricNoiseTexture);
-            SAMPLER(sampler_VolumetricNoiseTexture);
-            // Texture3D _VolumetricNoiseTexture;
-            // SamplerState sampler_VolumetricNoiseTexture;
+            // TEXTURE3D(_VolumetricNoiseTexture);
+            // SAMPLER(sampler_VolumetricNoiseTexture);
+
 
 #ifndef FOG_ONLY_OUTPUT
             TEXTURE2D(_MainTex);
@@ -129,10 +130,11 @@
             // return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f).xxx, 1 );
             float3 noiseUV = frac(wpos * _NoiseScale + _Time.y * _NoiseSpeed);
             //return half4( noiseUV, 1);
-            float noise = _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, noiseUV);
             // float noise = snoise(noiseUV);
-            return half4(noise.xx, .25, 1);
-            // float noise = tex3D(_NoiseTexture, frac(wpos * _NoiseData.x + float3(_Time.y * _NoiseVelocity.x, 0, _Time.y * _NoiseVelocity.y)));
+            // float noise = _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, noiseUV);
+            float3 noise = _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, noiseUV).xyz;
+            return half4(noise.xxx, 1);
+            // return half4(_VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, noiseUV).xyz, 1);
            
             // return half4( _VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, wpos.xyz/10.0f) );
 
