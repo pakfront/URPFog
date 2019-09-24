@@ -1,6 +1,6 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
-#include "SimplexNoise3D.hlsl"
+// #include "SimplexNoise3D.hlsl"
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture

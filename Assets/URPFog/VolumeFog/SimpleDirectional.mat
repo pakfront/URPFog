@@ -63,7 +63,7 @@ Material:
     - _Extinction: 0.55
     - _FOG_ONLY: 0
     - _FodDensity: 6.4
-    - _FogDensity: 0.83
+    - _FogDensity: 0.8
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0

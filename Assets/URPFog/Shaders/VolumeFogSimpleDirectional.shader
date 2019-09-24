@@ -46,8 +46,6 @@
             #pragma shader_feature NOISE
             
             #include "Volumetrics.hlsl"
-            #include "SimplexNoise3D.hlsl"
-
 
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
