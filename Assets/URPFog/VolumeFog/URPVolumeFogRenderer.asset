@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: VolumeFog
   m_EditorClassIdentifier: 
   settings:
-    Event: 300
-    volumeFogMaterial: {fileID: 2100000, guid: c602e5bff6c594a89a1feefcbe5aa33b, type: 2}
+    Event: 500
+    volumeFogMaterial: {fileID: 2100000, guid: 8f34ce55fe8c7443f9c7daf6d23f7d11, type: 2}
     volumeFogMaterialPassIndex: 0
     destination: 0
     textureId: _VolumeFogPassTexture

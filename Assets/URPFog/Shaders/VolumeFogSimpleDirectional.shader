@@ -50,10 +50,6 @@
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
             
-            // TEXTURE3D(_VolumetricNoiseTexture);
-            // SAMPLER(sampler_VolumetricNoiseTexture);
-
-
 #ifndef FOG_ONLY_OUTPUT
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
