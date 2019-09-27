@@ -7,9 +7,11 @@ Shader "VolumetricFog/DistanceFog"
 		[Toggle(FOG_ONLY_OUTPUT)]_FOG_ONLY ("Fog Only Output", Float) = 0
 		_Presence ("Fog Presence", Range(0, 1)) = 1 
 		_Scattering ("Scattering",  Range(0, 4)) = .5 
-		_ScatteringTint ("ScatteringTint", Color) = (1,1,1)
+		_ScatteringTint ("ScatteringTint", Color) = (0.5,0.6,0.7)
 		_Extinction ("Extinction",  Range(0, 4)) = .5 
 		_ExtinctionTint ("ExtinctionTint", Color) = (0,0,0)
+		[Toggle(USE_MAX_DISTANCE)]_USE_MAX_DISTANCE ("Use Max Distance", Float) = 0
+		_MaxDistance ("Max Distance", Range(1, 10000)) = 10000.0
 		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
 		_HeightFogFloor ("Height Fog Floor", Range(0, 10)) = 0
 		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
@@ -35,10 +37,21 @@ Shader "VolumetricFog/DistanceFog"
 
             #pragma shader_feature DEBUG_OUTPUT
             #pragma shader_feature FOG_ONLY_OUTPUT
+            #pragma shader_feature USE_MAX_DISTANCE
             #pragma shader_feature HEIGHT_FOG
 
+            CBUFFER_START(UnityPerMaterial)
+            float _Presence = 1;
+            float _Extinction = 0.5f;
+            float3 _ExtinctionTint = 0;
+            float _Scattering = 0.5f;
+            float3 _ScatteringTint = 1;
+            float _MaxDistance = 10000.0;
+            float _HeightFogDropoff = 1;
+            CBUFFER_END
+
             #include "Fog.hlsl"
-            
+
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
             
@@ -92,7 +105,15 @@ Shader "VolumetricFog/DistanceFog"
             float3 vpos = ComputeViewSpacePosition(input.uv.zw, deviceDepth, unity_CameraInvProjection);
             float3 wpos = mul(unity_CameraToWorld, float4(vpos, 1)).xyz;
             // there is probably a faster way to get just get world space depth
-            float distance = length(wpos-_WorldSpaceCameraPos);
+            // perhaps should be from view plane, not eye
+            // how can I tell if I hit the sky?
+            float3 viewDir = wpos-_WorldSpaceCameraPos;
+            float distance = length(viewDir);
+            viewDir /= distance;
+#ifdef USE_MAX_DISTANCE
+            distance = min(_MaxDistance, distance);
+#endif
+
 #ifdef DEBUG_OUTPUT
             return half4(distance.xxx/100.0,1);
 #else
@@ -101,8 +122,10 @@ Shader "VolumetricFog/DistanceFog"
 #else
             float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv.xy);
 #endif
-            // return half4(ExtinctionFog(distance, mainTex.rgb), mainTex.a);
-            return half4(ExtinctionScatteringFog(distance, mainTex.rgb), mainTex.a);
+            // return half4(MixFog(mainTex.rgb),distance,  mainTex.a);
+            // return half4(ScatteringFog(mainTex.rgb, distance, viewDir), mainTex.a);
+            return half4(SimpleHeightFog(mainTex.rgb, distance, viewDir, _WorldSpaceCameraPos), mainTex.a);
+            // return half4(ExtinctionScatteringFog(mainTex.rgb, distance, viewDir), mainTex.a);
 #endif
 
         }

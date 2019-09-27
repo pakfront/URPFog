@@ -1,41 +1,58 @@
 #ifndef FOG_INCLUDED
 #define FOG_INCLUDED
 
-CBUFFER_START(UnityPerMaterial)
-float _Presence = 1;
-float _Extinction = 0.5f;
-float3 _ExtinctionTint = 0;
-float _Scattering = 0.5f;
-float3 _ScatteringTint = 1;
-CBUFFER_END
 
-float3 ExtinctionFog(float distance, float3 original)
+float3 SimpleFog(float3 original, float distance )
 {
-    float fogAmount = 1.0 - exp( -distance * _Extinction.x );
+    float fogAmount = 1.0 - exp( -distance * _Scattering );
     return lerp( original, _ScatteringTint, fogAmount );
 }
 
-float3 ExtinctionScatteringFog(float distance, float3 original)
+float3 SimpleHeightFog(float3 original, float distance, float3 rayDir, float3 rayOrigin )
 {
-    // float fogAmount = 1.0 - exp( -distance * _Extinction.x );
-    //return original*(1.0-fogAmount) + _FogColor*fogAmount;
-    //return original*(1.0- (exp( -distance * _Extinction.x ))) + _FogColor*fogAmount;
-    
-    // return original*(1.0-exp(-distance*_Extinction.x)) + _FogColor*exp(-distance*_Extinction.x);
-    // return original*(1.0-exp(-distance*_Extinction.x));// + _FogColor*exp(-distance*_Extinction.x);
-    // return original * (1.0-exp(-distance*_Extinction.x));// + _FogColor*exp(-distance*_Extinction.x);
+    #ifndef HEIGHT_FOG
+    float fogAmount = 1.0 - exp( -distance * _Scattering );
+    #else
+    float b = _HeightFogDropoff;
+    float c = _Scattering/b;
+    float fogAmount = c * exp(-rayOrigin.y*b) * (1.0-exp( -distance*rayDir.y*b ))/rayDir.y;
+    fogAmount = saturate(fogAmount);
+    #endif
+    return lerp(original, _ScatteringTint, fogAmount);
+    // float fogAmount = c * exp(-rayOrigin.y*b) * (1.0-exp( -distance*rayDir.y*b ))/rayDir.y;
+    // return lerp( original, _ScatteringTint, fogAmount );
+}
 
-    // float3 extColor = float3( exp(-distance*_Extinction.x), exp(-distance*_Extinction.x) exp(-distance*_Extinction.x) );
-    // float3 insColor = float3( exp(-distance*_Scattering.x), exp(-distance*_Scattering.x) exp(-distance*_Scattering.x) );
-    // return original*(1.0-extColor) + fogColor*insColor;
+float3 ScatteringFog(float3 original, float distance , float3 rayDir)
+{
+    float fogAmount = 1.0 - exp( -distance * _Scattering );
+    Light mainLight = GetMainLight();
+    float lightAmount = max( dot(normalize(mainLight.direction), -rayDir), 0);
+
+    float3  fogColor  = lerp( _ScatteringTint, // bluish
+                           mainLight.color, // yellowish
+                           pow(lightAmount,8.0) );
+    return lerp( original, fogColor, fogAmount );
+}
+
+float3 ExtinctionScatteringFog(float3 original, float distance, float3 rayDir )
+{
+    Light mainLight = GetMainLight();
+    float lightAmount = max( dot(normalize(mainLight.direction), -rayDir), 0);
+
+    float3  fogColor  = lerp( _ScatteringTint, // bluish
+                           mainLight.color, // yellowish
+                           pow(lightAmount,8.0) );
+
+
       float3 extColor = _Presence * float3( 
         1 - exp( -distance * (_Extinction * (1-_ExtinctionTint.x)) ), 
         1 - exp( -distance * (_Extinction * (1-_ExtinctionTint.y)) ),
         1 - exp( -distance * (_Extinction * (1-_ExtinctionTint.z)) ));
     float3 insColor = _Presence * float3( 
-        1 - exp( -distance * (_Scattering * (_ScatteringTint.x))), 
-        1 - exp( -distance * (_Scattering * (_ScatteringTint.y))),
-        1 - exp( -distance * (_Scattering * (_ScatteringTint.z))));  
+        1 - exp( -distance * (_Scattering * (fogColor.x))), 
+        1 - exp( -distance * (_Scattering * (fogColor.y))),
+        1 - exp( -distance * (_Scattering * (fogColor.z))));  
     return original*(1.0-extColor) + insColor;
 }
 
