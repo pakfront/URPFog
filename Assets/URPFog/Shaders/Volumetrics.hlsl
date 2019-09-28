@@ -46,8 +46,8 @@ float _Range = 200.0f;
 float _SkyBoxExtinction = 0.9f;
 float _MieGFloat = .319;
 // float4 MieG = 1;
-float _NoiseScale;
-float3 _NoiseSpeed;
+float _NoiseScale = 1;
+float3 _NoiseSpeed = 0.1;
 CBUFFER_END
 
 #ifdef NOISE

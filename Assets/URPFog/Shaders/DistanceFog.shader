@@ -8,7 +8,7 @@ Shader "VolumetricFog/DistanceFog"
 		_Presence ("Fog Presence", Range(0, 1)) = 1 
 		_Scattering ("Scattering",  Range(0, 4)) = .5 
 		_ScatteringTint ("ScatteringTint", Color) = (0.5,0.6,0.7)
-		_LightPower ("Light Power",  Range(0, 1)) = 1 
+		_LightScatter  ("Light Scatter",  Range(0, 1)) = 1 
 		_Extinction ("Extinction",  Range(0, 4)) = .5 
 		_ExtinctionTint ("ExtinctionTint", Color) = (0,0,0)
 		[Toggle(USE_MAX_DISTANCE)]_USE_MAX_DISTANCE ("Use Max Distance", Float) = 0
@@ -18,7 +18,11 @@ Shader "VolumetricFog/DistanceFog"
 		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
 		[Toggle(RAYMARCH)]_RAYMARCH ("Ray March", Float) = 0
         [IntRange] _SampleCount ("Sample Count", Range (1, 48)) = 8
-   
+		[Toggle(NOISE)]_NOISE ("Noise", Float) = 0
+        _VolumetricNoiseTexture("Volumetric Noise Texture",3D) = "" {}
+		_NoiseExponent ("Noise Exponent", Range(0.1, 9)) = 1
+		_NoiseScale ("Noise Scale", Range(0, 10)) = 1
+		_NoiseSpeed ("Noise Speed", Vector) = (1,0,1)
     }
 	SubShader 
 	{
@@ -44,6 +48,7 @@ Shader "VolumetricFog/DistanceFog"
             #pragma shader_feature_local USE_MAX_DISTANCE
             #pragma shader_feature_local HEIGHT_FOG
             #pragma shader_feature_local RAYMARCH
+            #pragma shader_feature NOISE
 
             CBUFFER_START(UnityPerMaterial)
             float _Presence = 1;
@@ -51,13 +56,14 @@ Shader "VolumetricFog/DistanceFog"
             float3 _ExtinctionTint = 0;
             float _Scattering = 0.5f;
             float3 _ScatteringTint = 1;
-            float _LightPower = 8;
+            float _LightScatter = 8;
             float _MaxDistance = 10000.0;
             float _HeightFogDropoff = 1;
             int _SampleCount = 8;
+            float _NoiseExponent = 1;
+            float _NoiseScale;
+            float3 _NoiseSpeed;
             CBUFFER_END
-
-            #include "Fog.hlsl"
 
             TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
@@ -66,7 +72,14 @@ Shader "VolumetricFog/DistanceFog"
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
 #endif
-            
+
+#ifdef NOISE
+            TEXTURE3D(_VolumetricNoiseTexture);
+            SAMPLER(sampler_VolumetricNoiseTexture);
+#endif   
+
+            #include "Fog.hlsl"
+
         struct Attributes
         {
             float4 positionOS   : POSITION;
@@ -122,7 +135,13 @@ Shader "VolumetricFog/DistanceFog"
 #endif
 
 #ifdef DEBUG_OUTPUT
-            return half4(distance.xxx/100.0,1);
+#ifdef NOISE
+        float3 noiseUV = frac(wpos * 1.0/_NoiseScale + _Time.y * _NoiseSpeed);
+        float density = pow(_VolumetricNoiseTexture.Sample(sampler_VolumetricNoiseTexture, noiseUV).x,_NoiseExponent);        
+        
+        return half4(density.xxx,1);
+#endif
+        return half4(distance.xxx/100.0,1);
 #else
 #ifdef FOG_ONLY_OUTPUT
             float4 mainTex = float4(0,0,0,1);
