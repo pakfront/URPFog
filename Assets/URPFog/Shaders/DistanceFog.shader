@@ -8,6 +8,7 @@ Shader "VolumetricFog/DistanceFog"
 		_Presence ("Fog Presence", Range(0, 1)) = 1 
 		_Scattering ("Scattering",  Range(0, 4)) = .5 
 		_ScatteringTint ("ScatteringTint", Color) = (0.5,0.6,0.7)
+		_LightPower ("Light Power",  Range(0, 1)) = 1 
 		_Extinction ("Extinction",  Range(0, 4)) = .5 
 		_ExtinctionTint ("ExtinctionTint", Color) = (0,0,0)
 		[Toggle(USE_MAX_DISTANCE)]_USE_MAX_DISTANCE ("Use Max Distance", Float) = 0
@@ -15,6 +16,9 @@ Shader "VolumetricFog/DistanceFog"
 		[Toggle(HEIGHT_FOG)]_HEIGHT_FOG ("Height Fog", Float) = 0
 		_HeightFogFloor ("Height Fog Floor", Range(0, 10)) = 0
 		_HeightFogDropoff ("Height Fog Dropoff", Range(0, 10)) = 0.5
+		[Toggle(RAYMARCH)]_RAYMARCH ("Ray March", Float) = 0
+        [IntRange] _SampleCount ("Sample Count", Range (1, 48)) = 8
+   
     }
 	SubShader 
 	{
@@ -39,6 +43,7 @@ Shader "VolumetricFog/DistanceFog"
             #pragma shader_feature_local FOG_ONLY_OUTPUT
             #pragma shader_feature_local USE_MAX_DISTANCE
             #pragma shader_feature_local HEIGHT_FOG
+            #pragma shader_feature_local RAYMARCH
 
             CBUFFER_START(UnityPerMaterial)
             float _Presence = 1;
@@ -46,8 +51,10 @@ Shader "VolumetricFog/DistanceFog"
             float3 _ExtinctionTint = 0;
             float _Scattering = 0.5f;
             float3 _ScatteringTint = 1;
+            float _LightPower = 8;
             float _MaxDistance = 10000.0;
             float _HeightFogDropoff = 1;
+            int _SampleCount = 8;
             CBUFFER_END
 
             #include "Fog.hlsl"
@@ -122,9 +129,13 @@ Shader "VolumetricFog/DistanceFog"
 #else
             float4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv.xy);
 #endif
+#ifndef RAYMARCH
             // return half4(DistanceFog(mainTex.rgb),distance,  mainTex.a);
             // return half4(HeightFog(mainTex.rgb, distance, viewDir, _WorldSpaceCameraPos), mainTex.a);
             return half4(ScatteringHeightFog(mainTex.rgb, distance, viewDir, _WorldSpaceCameraPos), mainTex.a);
+#else
+            return half4(RayMarchedFog(mainTex.rgb, distance, viewDir, _WorldSpaceCameraPos), mainTex.a);
+#endif
 #endif
         }
             
