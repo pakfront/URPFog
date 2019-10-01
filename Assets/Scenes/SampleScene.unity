@@ -641,6 +641,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: ac60c9d4fe7e44eeb84bc6d9f3488850, type: 3}
+  kernelName: CSMain
   color: {r: 0.8001363, g: 0.8207547, b: 0.19744569, a: 0}
   result: {fileID: 0}
   size: 512

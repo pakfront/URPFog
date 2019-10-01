@@ -14,7 +14,7 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             public Target destination = Target.Color;
             public string textureId = "_VolumeFogPassTexture";
 
-            public ComputeShader volumetricNoiseShader;
+            public ComputeShaderTexture computeShaderTexture;
         }
         
         public enum Target
@@ -32,9 +32,13 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
         {
             var passIndex = settings.volumeFogMaterial != null ? settings.volumeFogMaterial.passCount - 1 : 1;
             settings.volumeFogMaterialPassIndex = Mathf.Clamp(settings.volumeFogMaterialPassIndex, -1, passIndex);
-            // RenderTexture volumetricNoiseTexture = ExecuteComputeShader3D(settings.volumetricNoiseShader);
-            // volumetricNoiseTexture.name = "VolumetricNoiseTexture";
-            // settings.volumeFogMaterial.SetTexture("_VolumetricNoiseTexture", volumetricNoiseTexture);
+
+            if (settings.computeShaderTexture != null)
+            {
+                settings.computeShaderTexture.Generate();
+                RenderTexture volumetricNoiseTexture = settings.computeShaderTexture.renderTexture;
+                settings.volumeFogMaterial.SetTexture("_VolumetricNoiseTexture", volumetricNoiseTexture);
+            }
             volumeFogPass = new VolumeFogPass(settings.Event, settings.volumeFogMaterial, settings.volumeFogMaterialPassIndex, name);
             m_RenderTextureHandle.Init(settings.textureId);
         }

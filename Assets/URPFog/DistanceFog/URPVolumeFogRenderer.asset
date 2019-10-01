@@ -18,8 +18,8 @@ MonoBehaviour:
     volumeFogMaterialPassIndex: 0
     destination: 0
     textureId: _VolumeFogPassTexture
-    volumetricNoiseShader: {fileID: 7200000, guid: ac60c9d4fe7e44eeb84bc6d9f3488850,
-      type: 3}
+    computeShaderTexture: {fileID: 11400000, guid: 284960e09191a44199184f7779ae2b18,
+      type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using UnityEngine;
 public class RunComputeShader : MonoBehaviour
 {
     public ComputeShader computeShader;
+    public string kernelName = "CSMain";
     public Color color =  Color.red;
     public RenderTexture result;
     public int size = 512;
