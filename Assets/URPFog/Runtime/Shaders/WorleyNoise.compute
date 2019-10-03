@@ -1,0 +1,52 @@
+// MIT License
+
+// Copyright (c) 2018 Michael Woodard
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#pragma kernel CSMain
+
+RWTexture3D<float4> Tex3D;
+
+float Tex3DRes;
+float Scale = 1;
+
+float Tex2Low = -0.2;
+float Tex2High = 1.0;
+
+#include "Libraries/ExampleNoise.hlsl"
+
+[numthreads(8,8,8)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+
+	float3 xyz = ((float3)id.xyz)/Scale / Tex3DRes;
+
+	float worleyR = worley3(xyz, 10);
+	float worleyG = worley3(xyz, 15);
+	float worleyB = worley3(xyz, 20);
+	float worleyA = worley3(xyz, 10);
+
+	worleyR = setRange(worleyR, Tex2Low, Tex2High);
+	worleyG = setRange(worleyG, Tex2Low, Tex2High);
+	worleyB = setRange(worleyB, Tex2Low, Tex2High);
+	worleyA = setRange(worleyA, Tex2Low, Tex2High);
+
+	Tex3D[id.xyz] = float4(worleyR, worleyG, worleyB, worleyA);
+}

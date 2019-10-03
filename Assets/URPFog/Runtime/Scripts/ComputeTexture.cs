@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[CreateAssetMenu(fileName = "ComputeShaderTexture", menuName = "Compute Shader/ComputeShaderTexture", order = 1)]
-public class ComputeShaderTexture : ScriptableObject
+[CreateAssetMenu(fileName = "ComputeTexture", menuName = "Compute Shader/ComputeShaderTexture", order = 1)]
+public class ComputeTexture : ScriptableObject
 {
     [Header("Compute Shader")]
     public ComputeShader computeShader;
@@ -20,6 +20,8 @@ public class ComputeShaderTexture : ScriptableObject
     public string assetName;
     public TextureFormat assetTextureFormat = TextureFormat.ARGB32;
     // TODO support export as PNG as well
+
+
     int kernel;
 
     void OnValidate()
@@ -128,58 +130,6 @@ public class ComputeShaderTexture : ScriptableObject
     }
 
 #if UNITY_EDITOR
-	// Force copy from GPU to CPU RAM and then to disk
-    // public void SaveAsset3D(string path)
-    // {
-    //     //for readability
-    //     int dim = size;
-    //     //Slice 3D Render Texture to individual layers
-    //     RenderTexture[] layers = new RenderTexture[size];
-    //     for (int i = 0; i < size; i++)
-    //         layers[i] = RenderTextureUtils.Copy3DSliceToRenderTexture(i, size, renderTextureFormat, renderTexture);
-    //     //Write RenderTexture slices to static textures
-    //     Texture2D[] finalSlices = new Texture2D[size];
-    //     for (int i = 0; i < size; i++)
-    //         finalSlices[i] = ConvertFromRenderTexture(layers[i], assetTextureFormat);
-    //     //Build 3D Texture from 2D slices
-    //     Texture3D output = new Texture3D(dim, dim, dim, assetTextureFormat, true);
-    //     output.filterMode = FilterMode.Trilinear;
-    //     Color[] outputPixels = output.GetPixels();
-    //     for (int k = 0; k < dim; k++)
-    //     {
-    //         Color[] layerPixels = finalSlices[k].GetPixels();
-    //         for (int i = 0; i < dim; i++)
-    //         {
-    //             for (int j = 0; j < dim; j++)
-    //             {
-    //                 outputPixels[i + j * dim + k * dim * dim] = layerPixels[i + j * dim];
-    //             }
-    //         }
-    //     }
-
-    //     output.SetPixels(outputPixels);
-    //     output.Apply();
-
-    //     UnityEditor.AssetDatabase.CreateAsset(output, path);
-    //     Debug.Log("Wrote " + output + " to " + path, this);
-    // }
-
-    // public void SaveAsset2D(string path, int slice)
-    // {
-    //     //for readability
-    //     int dim = size;
-    //     //Slice 3D Render Texture to individual layers
-    //     RenderTexture layer = RenderTextureUtils.Copy3DSliceToRenderTexture(slice, size, renderTextureFormat, renderTexture);
-    //     //Write RenderTexture slices to static textures
-    //     Texture2D finalSlice = ConvertFromRenderTexture(layer, assetTextureFormat);
-    //     //Build 3D Texture from 2D slices
-    //     Texture2D output = finalSlice;
-
-    //     UnityEditor.AssetDatabase.CreateAsset(output, path);
-    //     Debug.Log("Wrote  " + output + " to " + path, this);
-    // }
-
-
     public virtual void SaveAsset()
     {
         string path = "Assets/" + assetName + ".asset";

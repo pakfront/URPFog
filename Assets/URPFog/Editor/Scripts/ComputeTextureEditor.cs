@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(ComputeShaderTexture), true)]
-public class ComputeShaderTextureEditor: Editor
+[CustomEditor(typeof(ComputeTexture), true)]
+public class ComputeTextureEditor: Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        ComputeShaderTexture myScript = (ComputeShaderTexture)target;
+        ComputeTexture myScript = (ComputeTexture)target;
         if (GUILayout.Button("Clear"))
         {
             myScript.Clear();

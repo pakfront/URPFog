@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4b9ea7f33eca447097daaaa5e9d3084, type: 3}
-  m_Name: SimpleNoiseTexture
+  m_Name: SimplexNoiseComputeTexture
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: 6dd2b035fb89040d3b87ee9f3f66adb4, type: 3}
   kernelName: CSMain
   dimension: 3
-  size: 32
+  size: 64
   computeThreads: {x: 8, y: 8, z: 8}
   renderTexture: {fileID: 0}
   renderTextureFormat: 25
-  output2D: {fileID: 0}
-  output3D: {fileID: 0}
   texture3DSlicer: {fileID: 7200000, guid: dd97963193cc44997a8a18ca95f6e026, type: 3}
-  assetName: URPFog/Textures/Simple
+  assetName: Simplex
   assetTextureFormat: 9
-  scale: 0.5
+  scale: 0.0125

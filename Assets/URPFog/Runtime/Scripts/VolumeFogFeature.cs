@@ -13,8 +13,7 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             public int volumeFogMaterialPassIndex = -1;
             public Target destination = Target.Color;
             public string textureId = "_VolumeFogPassTexture";
-
-            public ComputeShaderTexture computeShaderTexture;
+            public ComputeTexture computeTexture;
         }
         
         public enum Target
@@ -33,10 +32,10 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             var passIndex = settings.volumeFogMaterial != null ? settings.volumeFogMaterial.passCount - 1 : 1;
             settings.volumeFogMaterialPassIndex = Mathf.Clamp(settings.volumeFogMaterialPassIndex, -1, passIndex);
 
-            if (settings.computeShaderTexture != null)
+            if (settings.computeTexture != null)
             {
-                settings.computeShaderTexture.Generate();
-                RenderTexture volumetricNoiseTexture = settings.computeShaderTexture.renderTexture;
+                settings.computeTexture.Generate();
+                RenderTexture volumetricNoiseTexture = settings.computeTexture.renderTexture;
                 settings.volumeFogMaterial.SetTexture("_VolumetricNoiseTexture", volumetricNoiseTexture);
             }
             volumeFogPass = new VolumeFogPass(settings.Event, settings.volumeFogMaterial, settings.volumeFogMaterialPassIndex, name);
@@ -57,44 +56,6 @@ namespace UnityEngine.Experiemntal.Rendering.Universal
             volumeFogPass.Setup(src, dest);
             renderer.EnqueuePass(volumeFogPass);
         }
-
-        // public RenderTexture ExecuteComputeShader2D(ComputeShader computeShader)
-        // {
-        //     Debug.Log("Executing Compute Shader 2D"+computeShader);
-
-        //     int size = 512;
-
-        //     int kernel = computeShader.FindKernel("CSMain");
-        //     RenderTexture result = new RenderTexture(size,size,24);
-        //     result.enableRandomWrite = true;
-        //     result.Create();
-
-        //     computeShader.SetTexture(kernel, "Result", result);
-        //     computeShader.SetVector("color", Color.red);
-        //     computeShader.Dispatch(kernel, size/8, size/8, 1); 
-        //     return result;
-        // }
-
-
-        // public RenderTexture ExecuteComputeShader3D(ComputeShader computeShader)
-        // {
-        //     Debug.Log("Executing Compute Shader 3D"+computeShader);
-
-        //     int size = 32;
-
-        //     int kernel = computeShader.FindKernel("CSMain");
-        //     RenderTexture result = new RenderTexture(size,size,0);
-        //     result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
-        //     result.volumeDepth = size;
-        //     result.format = RenderTextureFormat.R16; 
-        //     result.enableRandomWrite = true;
-        //     result.Create();
-
-        //     computeShader.SetTexture(kernel, "Result", result);
-        //     computeShader.SetVector("color", Color.red);
-        //     computeShader.Dispatch(kernel, size/8, size/8, 1); 
-        //     return result;
-        // }
     }
 }
 

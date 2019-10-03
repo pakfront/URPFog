@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[CreateAssetMenu(fileName = "ComputeShaderTexture", menuName = "Compute Shader/SimpleNoise", order = 1)]
-public class SimpleNoise : ComputeShaderTexture
+[CreateAssetMenu(fileName = "SimplexNoiseComputeTexture", menuName = "Compute Shader/SimplexNoiseComputeTexture", order = 1)]
+public class SimplexNoiseComputeTexture : ComputeTexture
 {
+    [Header("Simplex Noise Settings")]
     public float scale = 1;
 
     public override void SetParameters()

@@ -1,0 +1,15 @@
+#pragma kernel CSMain
+
+RWTexture3D<float4> Tex3D;
+
+float Tex3DRes;
+float Scale = 1;
+
+#include "Libraries/SimplexNoise3D.hlsl"
+
+[numthreads(8,8,8)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float3 xyz = ((float3)id.xyz)/Scale / Tex3DRes;
+	Tex3D[id.xyz] = float4(snoise(xyz).xxxx);
+}
